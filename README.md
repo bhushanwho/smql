@@ -8,7 +8,7 @@ includes example producer and consumer web UIs.
 
 ### message lifecycle
 
-messages is SMQL move through the following distinct states:
+messages in SMQL move through the following distinct states:
 1. **ready**: available for consumers to retrieve
 1. **processing**: locked by consumer, invisible to others (peek as workaround for visibility, only for demoing)
 
