@@ -16,7 +16,8 @@
 
 ## what
 
-smol in-memory mq in rust
+smol in-memory mq in rust.
+
 supports add, get/consume, delete/ack, retry, purge, and peek operations.
 includes example producer and consumer web UIs.
 
