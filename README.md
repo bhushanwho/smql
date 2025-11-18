@@ -14,7 +14,7 @@ messages is SMQL move through the following distinct states:
 
 ### message structure
 
-```json
+```
 {
   "id": "uuid",
   "body": "string",
@@ -34,10 +34,9 @@ messages is SMQL move through the following distinct states:
 
 ### shortcomings
 
-- no persistence - All messages lost on server restart
+- no persistence - all messages lost on server restart
 - no TTL - Messages remain until explicitly deleted
-- no dead letter queue - Retry count increments but messages retry indefinitely
-- single node only - No clustering or replication
+- no dead letter queue - retry count increments but messages retry indefinitely
 
 ## operations || api reference
 
