@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQ Producer</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; background: #f8f9fa; }
+        #message-form { display: flex; margin-bottom: 20px; }
+        #message-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; }
+        #send-button { padding: 10px; background: #007bff; border: 1px solid #007bff; color: #fff; border-radius: 0 4px 4px 0; cursor: pointer; }
+        #status-log { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 15px; height: 300px; overflow-y: auto; }
+        .log-entry { padding: 6px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .retry-btn { background: #ffc107; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<h1>Message Producer</h1>
+
+<div id="message-form">
+    <input id="message-input" placeholder="Enter your message...">
+    <button id="send-button">Send</button>
+</div>
+
+<h3>Send Log</h3>
+<div id="status-log"></div>
+
+<script>
+const MQ_BASE_URL = "http://localhost:1337";
+const logBox = document.getElementById("status-log");
+
+async function sendMessage() {
+    const body = document.getElementById("message-input").value.trim();
+    if (!body) return;
+
+    const res = await fetch(`${MQ_BASE_URL}/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body })
+    });
+
+    const msg = await res.json();
+    addLog(msg);
+    document.getElementById("message-input").value = "";
+}
+
+function addLog(msg) {
+    const div = document.createElement("div");
+    div.className = "log-entry";
+    div.innerHTML = `
+        <span>"${msg.body}"<br><small>${msg.id}</small></span>
+        <button class="retry-btn">Retry</button>
+    `;
+
+    div.querySelector(".retry-btn").onclick = () => retryMessage(msg.id);
+    logBox.prepend(div);
+}
+
+async function retryMessage(id) {
+    await fetch(`${MQ_BASE_URL}/retry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [id] })
+    });
+    alert("Retried " + id);
+}
+
+document.getElementById("send-button").onclick = sendMessage;
+document.getElementById("message-input").addEventListener("keyup", e => {
+    if (e.key === "Enter") sendMessage();
+});
+</script>
+</body>
+</html>
